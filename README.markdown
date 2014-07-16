@@ -169,8 +169,9 @@ _**Description**_: Connects to a Redis instance.
 *host*: string. can be a host, or the path to a unix domain socket  
 *port*: int, optional  
 *timeout*: float, value in seconds (optional, default is 0 meaning unlimited)  
-*reserved*: should be NULL if retry_interval is specified
-*retry_interval*: int, value in milliseconds (optional)
+*reserved*: should be NULL if retry_interval is specified 
+*retry_interval*: int, value in milliseconds (optional) 
+*context*: resource, a stream context that allow you to choose which ip address you want to bind your outgoing connection to. This is useful when you have multiple ipaddress on the server and possibly a private and  public network
 
 ##### *Return value*
 
@@ -184,6 +185,13 @@ $redis->connect('127.0.0.1'); // port 6379 by default
 $redis->connect('127.0.0.1', 6379, 2.5); // 2.5 sec timeout.
 $redis->connect('/tmp/redis.sock'); // unix domain socket.
 $redis->connect('127.0.0.1', 6379, 1, NULL, 100); // 1 sec timeout, 100ms delay between reconnection attempts.
+$opts = array(
+    'socket' => array(
+        'bindto' => '10.0.0.1:0', < --don't specify the outgoing port. It doesnt make sense
+    ),
+);
+$context = stream_context_create($opts);
+$redis->connect('127.0.0.1', 6379, 1, NULL, NULL,$context);
 ~~~
 
 ### pconnect, popen
